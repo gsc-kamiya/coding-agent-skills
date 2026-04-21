@@ -4,7 +4,7 @@
 #
 # 使い方 (PowerShell に1行を貼り付けて Enter):
 #
-#   irm https://raw.githubusercontent.com/h2o-r/coding-agent-skills/main/bootstrap.ps1 | iex
+#   irm https://raw.githubusercontent.com/gsc-kamiya/coding-agent-skills/main/bootstrap.ps1 | iex
 #
 # このスクリプトが自動で実行する内容:
 #   1. Git, Node.js (>= 20), GitHub CLI のインストール
@@ -20,7 +20,7 @@ function Refresh-Path {
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 }
 
-$repoUrl    = "https://github.com/h2o-r/coding-agent-skills.git"
+$repoUrl    = "https://github.com/gsc-kamiya/coding-agent-skills.git"
 $installDir = Join-Path $env:USERPROFILE "coding-agent-skills"
 
 Write-Host ""

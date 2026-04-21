@@ -5,7 +5,7 @@
 #
 # 使い方 (ターミナルにこの1行を貼り付けて Enter):
 #
-#   curl -fsSL https://raw.githubusercontent.com/h2o-r/coding-agent-skills/main/bootstrap.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/gsc-kamiya/coding-agent-skills/main/bootstrap.sh | bash
 #
 # このスクリプトが自動で実行する内容:
 #   1. Git, Node.js (>= 20), GitHub CLI のインストール
@@ -25,7 +25,7 @@ echo -e "${BOLD}${CYAN}  Coding-Agent Skills - セットアップ${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-REPO_URL="https://github.com/h2o-r/coding-agent-skills.git"
+REPO_URL="https://github.com/gsc-kamiya/coding-agent-skills.git"
 INSTALL_DIR="$HOME/coding-agent-skills"
 
 # --- Homebrew (macOS) ---

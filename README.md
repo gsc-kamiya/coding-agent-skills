@@ -11,7 +11,7 @@
 ### macOS / Linux
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/h2o-r/coding-agent-skills/main/bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/gsc-kamiya/coding-agent-skills/main/bootstrap.sh | bash
 ```
 
 ### Windows
@@ -19,7 +19,7 @@ curl -fsSL https://raw.githubusercontent.com/h2o-r/coding-agent-skills/main/boot
 「スタート」→「PowerShell」を開いて貼り付け:
 
 ```powershell
-irm https://raw.githubusercontent.com/h2o-r/coding-agent-skills/main/bootstrap.ps1 | iex
+irm https://raw.githubusercontent.com/gsc-kamiya/coding-agent-skills/main/bootstrap.ps1 | iex
 ```
 
 > **GitHub 認証**: スクリプトの最後で `gh auth login` が走り、ブラウザでサインインを促されます。8桁のワンタイムコードを画面に表示 → ブラウザで貼り付け → 完了。

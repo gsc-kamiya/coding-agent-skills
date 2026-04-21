@@ -17,7 +17,7 @@
 ## 個別インストール（既にエージェント CLI を導入済みの場合）
 
 ```bash
-git clone https://github.com/h2o-r/coding-agent-skills.git ~/coding-agent-skills
+git clone https://github.com/gsc-kamiya/coding-agent-skills.git ~/coding-agent-skills
 cd ~/coding-agent-skills
 
 # macOS / Linux
