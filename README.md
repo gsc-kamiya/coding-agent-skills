@@ -1,42 +1,42 @@
 # Claude Code Skills
 
-A collection of reusable Claude Code skills for business workflows. These skills are designed to be **generic and configurable** -- customize them for your own company, projects, and tools via placeholder variables in your project's `CLAUDE.md`.
+業務ワークフロー向けの再利用可能な Claude Code スキル集です。各スキルは **汎用かつ設定可能** に設計されており、自社・自プロジェクト・利用ツールに合わせてプロジェクト直下の `CLAUDE.md` 内のプレースホルダ変数で挙動をカスタマイズできます。
 
-## Setup
+## セットアップ
 
-### 1. Clone the Repository
+### 1. リポジトリをクローン
 
 ```bash
 cd ~/repos
 git clone git@github.com:{YOUR_ORG}/claude-skills.git
 ```
 
-### 2. Install Skills
+### 2. スキルをインストール
 
 ```bash
 cd claude-skills
 ./setup.sh
 ```
 
-`setup.sh` replaces `~/.claude/skills/` with a symlink to this repository's `skills/` directory.
-If existing skills are found, a backup (`~/.claude/skills.bak.{timestamp}`) is created first.
+`setup.sh` は `~/.claude/skills/` をこのリポジトリの `skills/` ディレクトリへのシンボリックリンクに置き換えます。
+既存のスキルが存在する場合は、先に `~/.claude/skills.bak.{timestamp}` としてバックアップを作成します。
 
 ```
 ~/.claude/skills/ -> ~/repos/claude-skills/skills/
 ```
 
-### 3. MCP Servers
+### 3. MCP サーバー
 
-Many skills depend on MCP (Model Context Protocol) servers. Configure them in `~/.claude.json` (global) or per-project `.claude/settings.json`.
+多くのスキルは MCP（Model Context Protocol）サーバーに依存しています。`~/.claude.json`（グローバル）またはプロジェクト直下の `.claude/settings.json` に設定してください。
 
-| MCP Server | Package | Purpose | Used By |
+| MCP サーバー | パッケージ | 用途 | 利用スキル |
 |:--|:--|:--|:--|
-| **Google Workspace** | `workspace-mcp` (uvx) | Gmail, Calendar, Chat | pre/post-meeting-proposal, invoice-draft, ball-check |
-| **Slack** | Claude Code built-in | Channel/thread reading, search | ball-check, progress-check, work-report |
-| **Ticket System** | `backlog-mcp-server`, Jira MCP, etc. | Ticket management | ball-check, progress-check, work-report |
-| **Accounting** | `freee-mcp`, QuickBooks MCP, etc. | Invoice drafts | invoice-draft, month-end |
+| **Google Workspace** | `workspace-mcp`（uvx） | Gmail, Calendar, Chat | pre/post-meeting-proposal, invoice-draft, ball-check |
+| **Slack** | Claude Code 標準搭載 | チャンネル/スレッド読み取り、検索 | ball-check, progress-check, work-report |
+| **チケット管理** | `backlog-mcp-server`, Jira MCP など | チケット操作 | ball-check, progress-check, work-report |
+| **会計システム** | `freee-mcp`, QuickBooks MCP など | 請求書ドラフト | invoice-draft, month-end |
 
-#### Google Workspace MCP Example (`~/.claude.json`)
+#### Google Workspace MCP の例（`~/.claude.json`）
 
 ```json
 {
@@ -54,13 +54,13 @@ Many skills depend on MCP (Model Context Protocol) servers. Configure them in `~
 }
 ```
 
-> **Important**: Set `WORKSPACE_MCP_PORT` to `"0"` (auto-assign) to prevent port conflicts when running multiple Claude Code instances.
+> **重要**: `WORKSPACE_MCP_PORT` は `"0"`（自動割当）にしてください。複数の Claude Code インスタンスを同時起動する際のポート競合を防ぎます。
 
 #### Slack MCP
 
-Use Claude Code's built-in Slack MCP. Enable it from the Claude Code settings.
+Claude Code 標準搭載の Slack MCP を使用します。Claude Code の設定画面から有効化してください。
 
-#### Ticket System MCP Example (Backlog)
+#### チケット管理 MCP の例（Backlog）
 
 ```json
 {
@@ -77,9 +77,9 @@ Use Claude Code's built-in Slack MCP. Enable it from the Claude Code settings.
 }
 ```
 
-### 4. CLI Tools
+### 4. CLI ツール
 
-| Tool | Install | Used By |
+| ツール | インストール | 利用スキル |
 |:--|:--|:--|
 | **GitHub CLI** (`gh`) | `brew install gh` | fix-pr-ci, fix-pr-review, meeting-review, ball-check |
 | **Playwright** | `npm install -D @playwright/test && npx playwright install` | screen-*, screen-capture |
@@ -87,109 +87,109 @@ Use Claude Code's built-in Slack MCP. Enable it from the Claude Code settings.
 | **google-genai** | `pip install google-genai pillow` | generate-slides, post-meeting-proposal |
 | **Docker** | Docker Desktop | weekly-report, screen-tdd, screen-test |
 
-> **Multiple GitHub accounts**: If using multiple Claude Code instances simultaneously, use `GH_TOKEN` per-terminal instead of `gh auth switch` (which affects all terminals globally):
+> **複数 GitHub アカウントの使い分け**: 複数の Claude Code インスタンスを同時に動かす場合、グローバルに認証状態を変更する `gh auth switch` ではなく、ターミナルごとに `GH_TOKEN` を使ってください:
 > ```bash
-> # Bad: affects other terminals
+> # NG: 他のターミナルにも影響する
 > gh auth switch --user my-account
 >
-> # Good: this terminal only
+> # OK: このターミナルだけに影響する
 > export GH_TOKEN=$(gh auth token --user my-account)
 > git push origin main
 > ```
 
-#### Google Workspace CLI (Optional)
+#### Google Workspace CLI（任意）
 
-Two CLI options for Google Workspace operations beyond MCP:
+MCP の範囲を超える Google Workspace 操作には、以下の CLI が利用できます:
 
-**Option A: `gws`** -- [Google official CLI](https://github.com/googleworkspace/cli)
+**選択肢 A: `gws`** -- [Google 公式 CLI](https://github.com/googleworkspace/cli)
 ```bash
 npm install -g @googleworkspace/cli
 gws auth setup && gws auth login
 ```
 
-**Option B: `gog`** -- [Community CLI](https://github.com/steipete/gogcli)
+**選択肢 B: `gog`** -- [コミュニティ製 CLI](https://github.com/steipete/gogcli)
 ```bash
 brew install gogcli
 gog auth credentials ~/Downloads/client_secret_*.json
 gog auth add you@gmail.com
 ```
 
-> **Tip**: MCP and CLI can be used together. Use CLI via the Bash tool when MCP doesn't cover a needed API operation.
+> **ヒント**: MCP と CLI は併用可能です。MCP がカバーしていない API 操作が必要な場合は、Bash ツール経由で CLI を呼び出してください。
 
 ---
 
-## Skills (23 skills / 5 categories)
+## スキル一覧（全 23 スキル / 5 カテゴリ）
 
-### Development Workflow (8 skills)
+### 開発ワークフロー（8 スキル）
 
-TDD-driven screen modification, CI auto-fix, visual comparison, slide generation, and progress reporting.
+TDD ベースの画面修正、CI 自動修正、ビジュアル比較、スライド生成、進捗レポート。
 
-| Command | Description | Prerequisites |
+| コマンド | 概要 | 前提 |
 |:--|:--|:--|
-| `/screen-tdd` | TDD-driven screen modification (analyze -> test -> implement -> Playwright visual compare) | Docker, Playwright |
-| `/screen-analyze` | Comprehensive screen implementation analysis and modification planning | -- |
-| `/screen-test` | Run unit tests + Playwright visual comparison, fix differences iteratively | Docker, Playwright |
-| `/screen-capture` | Capture screenshots with Playwright and visually inspect | Playwright |
-| `/fix-pr-ci` | Auto-fix CI issues (linting/static analysis) on a PR -- loop until all checks pass | GitHub CLI |
-| `/fix-pr-review` | Fix human review + CI feedback on a PR -- loop until all resolved | GitHub CLI |
-| `/generate-slides` | Generate professional slides with Gemini image generation, combine into PDF | Vertex AI, google-genai |
-| `/weekly-report` | Auto-generate weekly progress report (MD + PPTX) from codebase analysis | Docker, python-pptx |
+| `/screen-tdd` | TDD ベースの画面修正（分析 → テスト → 実装 → Playwright ビジュアル比較） | Docker, Playwright |
+| `/screen-analyze` | 既存画面実装の網羅分析と修正計画の作成 | -- |
+| `/screen-test` | 単体テスト + Playwright ビジュアル比較を実行し、差分を反復的に修正 | Docker, Playwright |
+| `/screen-capture` | Playwright でスクリーンショットを取得して目視確認 | Playwright |
+| `/fix-pr-ci` | PR の CI 指摘（lint/静的解析）を自動修正し、全チェック通過までループ | GitHub CLI |
+| `/fix-pr-review` | PR の人間レビュー + CI 指摘の両方を解消するまでループ | GitHub CLI |
+| `/generate-slides` | Gemini 画像生成でプロ品質のスライドを作成し、PDF に結合 | Vertex AI, google-genai |
+| `/weekly-report` | コードベース解析から週次進捗レポート（MD + PPTX）を自動生成 | Docker, python-pptx |
 
-### Project Management (3 skills)
+### プロジェクト管理（3 スキル）
 
-Cross-platform analysis of project status from Slack, ticket systems, and documentation.
+Slack・チケットシステム・ドキュメントを横断したプロジェクト状況分析。
 
-| Command | Description | Prerequisites |
+| コマンド | 概要 | 前提 |
 |:--|:--|:--|
-| `/progress-check` | Update WBS from ticket system, detect delays, generate Mermaid Gantt chart | Ticket system MCP |
-| `/meeting-review` | Parse meeting minutes -> detect spec changes -> batch-update GitHub Issues & docs | GitHub CLI |
-| `/work-report` | Generate monthly work report from time allocation + WBS + tickets | Ticket system MCP |
+| `/progress-check` | チケットシステムから WBS を更新、遅延検知、Mermaid ガントチャート生成 | チケット管理 MCP |
+| `/meeting-review` | 議事録を解析 → 仕様変更を検出 → GitHub Issue とドキュメントを一括更新 | GitHub CLI |
+| `/work-report` | 工数表 + WBS + チケットから月次稼働報告書を生成 | チケット管理 MCP |
 
-### Sales Workflow (4 skills)
+### 営業ワークフロー（4 スキル）
 
-Discovery-first sales methodology: lead screening, weekly pipeline review, briefing prep before meetings, proposal creation after.
+ディスカバリー先行型の営業プロセス: リードスクリーニング、週次パイプラインレビュー、商談前ブリーフィング、商談後の提案資料作成。
 
-| Command | Description | Prerequisites |
+| コマンド | 概要 | 前提 |
 |:--|:--|:--|
-| `/lead-screen` | Score inbound leads (matching services, referrals) on 5 axes and produce Go/No-Go + proposal form draft | Gmail MCP |
-| `/lead-analyze` | Weekly lead pipeline review: new lead screening + in-progress status updates + dormant detection | Gmail MCP |
-| `/pre-meeting-proposal` | Pre-meeting briefing: prospect research + discovery questions + internal prep notes | Gmail MCP |
-| `/post-meeting-proposal` | Post-meeting proposal: transcript analysis + proposal doc + Gemini slides + email draft | Gmail MCP, Vertex AI |
+| `/lead-screen` | インバウンドリード（マッチングサービス、紹介案件）を5軸でスコアリングし、Go/No-Go 判定と提案フォーム下書きを出力 | Gmail MCP |
+| `/lead-analyze` | 週次リードパイプラインレビュー: 新規スクリーニング + 進行中ステータス更新 + 休眠検知 | Gmail MCP |
+| `/pre-meeting-proposal` | 商談前ブリーフィング: 顧客リサーチ + ディスカバリー質問 + 社内向け準備メモ | Gmail MCP |
+| `/post-meeting-proposal` | 商談後提案: 議事録解析 + 提案ドキュメント + Gemini スライド + メール下書き | Gmail MCP, Vertex AI |
 
-### Operations (3 skills)
+### オペレーション（3 スキル）
 
-Action item tracking, invoicing, and month-end orchestration.
+アクションアイテム追跡、請求書発行、月次決算オーケストレーション。
 
-| Command | Description | Prerequisites |
+| コマンド | 概要 | 前提 |
 |:--|:--|:--|
-| `/ball-check` | Cross-platform action item tracking (Slack + Chat + GitHub + tickets + email) | Slack MCP, Ticket MCP |
-| `/invoice-draft` | Generate invoice draft + accounting system input guide | Accounting MCP |
-| `/month-end` | Month-end orchestrator: ball-check -> progress -> docs -> report -> invoice -> git push | All MCP servers |
+| `/ball-check` | プラットフォーム横断のアクションアイテム追跡（Slack + Chat + GitHub + チケット + メール） | Slack MCP, チケット MCP |
+| `/invoice-draft` | 請求書ドラフト + 会計システム入力ガイドの生成 | 会計 MCP |
+| `/month-end` | 月次クロージングのオーケストレーション: ball-check → progress → docs → report → invoice → git push | 全 MCP サーバー |
 
-### Site Management (5 skills)
+### サイト運用（5 スキル）
 
-Coding-agent setup for non-engineers, plus a guarded "describe in plain language → publish to GitHub Pages" workflow. See `templates/scripts/` for cross-platform setup scripts and `templates/.github/workflows/` for a deploy workflow you can drop into any static-site project.
+非エンジニア向けのコーディングエージェント環境セットアップと、「自然言語で要件を伝える → GitHub Pages へ公開」までを安全に回すワークフロー。`templates/scripts/` にクロスプラットフォーム対応のセットアップスクリプト、`templates/.github/workflows/` に静的サイトプロジェクトに流用できる汎用デプロイワークフローを同梱しています。
 
-| Command | Description | Prerequisites |
+| コマンド | 概要 | 前提 |
 |:--|:--|:--|
-| `/agent-setup` | Guided install of Node.js / GitHub CLI / Claude Code / Gemini CLI / Codex CLI + project deps | -- |
-| `/agent-setup-check` | Verify the development environment is healthy | -- |
-| `/site-update` | Translate plain-language requirements into code changes; auto-test → repair → preview | GitHub CLI, project test cmd |
-| `/site-preview` | Sync with remote, run tests with auto-repair, present preview URLs | GitHub CLI, project test cmd |
-| `/site-publish` | Test gate → conflict-safe rebase → user confirm → commit → push → monitor deploy | GitHub CLI, project test cmd |
+| `/agent-setup` | Node.js / GitHub CLI / Claude Code / Gemini CLI / Codex CLI とプロジェクト依存パッケージのガイド付きインストール | -- |
+| `/agent-setup-check` | 開発環境が正常に整っているかをヘルスチェック | -- |
+| `/site-update` | 自然言語の要件をコード変更に翻訳し、自動テスト → 自動修復 → プレビューまで実施 | GitHub CLI, プロジェクトのテストコマンド |
+| `/site-preview` | リモートと同期 → テスト（自動修復付き）→ プレビュー URL を案内 | GitHub CLI, プロジェクトのテストコマンド |
+| `/site-publish` | テストゲート → 競合回避 rebase → ユーザー確認 → コミット → push → デプロイ監視 | GitHub CLI, プロジェクトのテストコマンド |
 
 ---
 
-## Project Configuration (`CLAUDE.md`)
+## プロジェクト設定（`CLAUDE.md`）
 
-Most skills use placeholder variables like `{PROJECT_NAME}` or `{SLACK_CHANNELS}`. Define these in your project's `CLAUDE.md`.
+ほとんどのスキルは `{PROJECT_NAME}` や `{SLACK_CHANNELS}` などのプレースホルダ変数を使います。プロジェクト直下の `CLAUDE.md` で定義してください。
 
-### Common Configuration Template
+### 共通設定テンプレート
 
 ```markdown
 ## Skill Configuration
 
-### Project Basics
+### プロジェクト基本情報
 - {PROJECT_NAME}: MyProject
 - {COMPANY_NAME}: Acme Corp
 - {PM_DIR}: docs/pm
@@ -205,10 +205,10 @@ Most skills use placeholder variables like `{PROJECT_NAME}` or `{SLACK_CHANNELS}
 - {SLACK_USERS_EXTERNAL}:
   - Charlie: U0123456791 (Client Corp, PM)
 
-### Ticket System
+### チケットシステム
 - {TICKET_PROJECT}: MY_PROJECT (ID: 12345)
 
-### Development (screen-* skills)
+### 開発系（screen-* スキル）
 - {VIEW_DIR}: modules/admin/views/
 - {USER_VIEW_DIR}: views/
 - {CSS_FILES}: web/css/main.css, web/css/color.css
@@ -220,31 +220,31 @@ Most skills use placeholder variables like `{PROJECT_NAME}` or `{SLACK_CHANNELS}
 - {PLAYWRIGHT_CMD}: cd playwright && npx playwright test {file} --project=local
 - {LOCAL_URL}: https://localhost:8080
 
-### CI/GitHub (fix-pr-* skills)
+### CI / GitHub（fix-pr-* スキル）
 - {GITHUB_REPO}: my-org/my-repo
 - {GH_USER}: my-github-user
 - {CI_BOT_USER}: github-actions[bot]
 - {LINT_FIX_CMD}: docker compose exec -T app vendor/bin/phpcbf {files}
 - {LINT_CHECK_CMD}: docker compose exec -T app vendor/bin/phpcs {files}
 
-### Invoicing (invoice-draft)
+### 請求（invoice-draft）
 - {CLIENT_NAME}: Client Corp
 - {CONTRACT_TYPE}: T&M
 - {BILLING_AMOUNT}: $10,000
 - {COST_ALLOCATION_FILE}: docs/pm/time-allocation.xlsx
-- {BANK_INFO}: (your bank details)
-- {INVOICE_ISSUER}: (your company info)
+- {BANK_INFO}: (振込先情報)
+- {INVOICE_ISSUER}: (発行元の会社情報)
 - {ACCOUNTING_SYSTEM}: freee
 
-### Sales (pre/post-meeting-proposal)
+### 営業（pre/post-meeting-proposal）
 - {SALES_DIR}: sales/
 - {GCP_PROJECT}: my-gcp-project
-- {SENDER_NAME}: Your Name
-- {SENDER_TITLE}: CEO
+- {SENDER_NAME}: 担当者名
+- {SENDER_TITLE}: 役職
 - {SENDER_EMAIL}: you@company.com
 - {COMPANY_URL}: https://company.com
 
-### Site Management (agent-setup, site-* skills)
+### サイト運用（agent-setup, site-* スキル）
 - {SITE_NAME}: My Site
 - {LOCAL_DEV_URL}: http://localhost:3000/
 - {BASE_URL_PATH}: /my-site/
@@ -253,57 +253,57 @@ Most skills use placeholder variables like `{PROJECT_NAME}` or `{SLACK_CHANNELS}
 - {TEST_FULL_CMD}: npx playwright test
 - {TEST_FILE}: e2e/site.spec.ts
 - {DEPLOY_BRANCH}: main
-- {DEPLOY_WAIT_HINT}: 2-3 minutes
+- {DEPLOY_WAIT_HINT}: 2-3 分
 - {INSTALL_AGENTS}: claude,gemini,codex
 - {NODE_MIN_VERSION}: 20
 - {PROTECTED_PATHS}: nuxt.config.ts:baseURL, public/data/*.auto.json
 - {DESIGN_TOKENS}: primary, secondary, accent
-- {PAGES_MAP}: (table — see skills/site-update/SKILL.md for the template)
+- {PAGES_MAP}: （表形式 — テンプレートは skills/site-update/SKILL.md を参照）
 ```
 
 ---
 
-## Directory Structure
+## ディレクトリ構成
 
 ```
 claude-skills/
 ├── README.md
-├── setup.sh                  # Symlinks ~/.claude/skills/ → this repo
+├── setup.sh                  # ~/.claude/skills/ → このリポにシンボリックリンク
 ├── skills/
-│   ├── screen-tdd/           # Development
-│   ├── screen-analyze/       # Development
-│   ├── screen-test/          # Development
-│   ├── screen-capture/       # Development
-│   ├── fix-pr-ci/            # Development
-│   ├── fix-pr-review/        # Development
-│   ├── generate-slides/      # Development
-│   ├── weekly-report/        # Development
-│   ├── progress-check/       # Project Management
-│   ├── meeting-review/       # Project Management
-│   ├── work-report/          # Project Management
-│   ├── lead-screen/          # Sales
-│   ├── lead-analyze/         # Sales
-│   ├── pre-meeting-proposal/ # Sales
-│   ├── post-meeting-proposal/# Sales
-│   ├── ball-check/           # Operations
-│   ├── invoice-draft/        # Operations
-│   ├── month-end/            # Operations
-│   ├── agent-setup/          # Site Management
-│   ├── agent-setup-check/    # Site Management
-│   ├── site-update/          # Site Management
-│   ├── site-preview/         # Site Management
-│   └── site-publish/         # Site Management
-└── templates/                # Drop-in templates for new projects
-    ├── scripts/              # Cross-platform bootstrap & setup (sh + ps1)
-    ├── .github/workflows/    # GitHub Pages deploy workflow
-    └── agent-config/         # CLAUDE.md / AGENTS.md / GEMINI.md skeletons
+│   ├── screen-tdd/           # 開発
+│   ├── screen-analyze/       # 開発
+│   ├── screen-test/          # 開発
+│   ├── screen-capture/       # 開発
+│   ├── fix-pr-ci/            # 開発
+│   ├── fix-pr-review/        # 開発
+│   ├── generate-slides/      # 開発
+│   ├── weekly-report/        # 開発
+│   ├── progress-check/       # プロジェクト管理
+│   ├── meeting-review/       # プロジェクト管理
+│   ├── work-report/          # プロジェクト管理
+│   ├── lead-screen/          # 営業
+│   ├── lead-analyze/         # 営業
+│   ├── pre-meeting-proposal/ # 営業
+│   ├── post-meeting-proposal/# 営業
+│   ├── ball-check/           # オペレーション
+│   ├── invoice-draft/        # オペレーション
+│   ├── month-end/            # オペレーション
+│   ├── agent-setup/          # サイト運用
+│   ├── agent-setup-check/    # サイト運用
+│   ├── site-update/          # サイト運用
+│   ├── site-preview/         # サイト運用
+│   └── site-publish/         # サイト運用
+└── templates/                # 新規プロジェクトに流用できるテンプレート
+    ├── scripts/              # クロスプラットフォーム bootstrap & setup（sh + ps1）
+    ├── .github/workflows/    # GitHub Pages デプロイ workflow
+    └── agent-config/         # CLAUDE.md / AGENTS.md / GEMINI.md ひな形
 ```
 
 ---
 
-## Adding / Updating Skills
+## スキルの追加・更新
 
-### Update an Existing Skill
+### 既存スキルの更新
 
 ```bash
 cd ~/repos/claude-skills
@@ -311,29 +311,29 @@ vim skills/{skill-name}/SKILL.md
 git add -A && git commit -m "update: {skill-name}" && git push
 ```
 
-On other machines: `cd ~/repos/claude-skills && git pull`
+他の端末では: `cd ~/repos/claude-skills && git pull`
 
-### Add a New Skill
+### 新規スキルの追加
 
-1. Create `skills/{skill-name}/SKILL.md`
-2. Define `name`, `description`, `argument-hint` in the frontmatter
-3. Update this README's skill table
-4. Commit & push
+1. `skills/{skill-name}/SKILL.md` を作成
+2. フロントマターに `name`, `description`, `argument-hint` を定義
+3. この README のスキル一覧表を更新
+4. コミット & push
 
-### SKILL.md Template
+### SKILL.md テンプレート
 
 ```markdown
 ---
 name: my-new-skill
-description: One-line description of what this skill does
-argument-hint: "[argument description]"
+description: スキルが何をするかを 1 行で説明
+argument-hint: "[引数の説明]"
 disable-model-invocation: true
 ---
 
 # Skill Name
 
 ## Configuration
-- `{VARIABLE}`: Description
+- `{VARIABLE}`: 説明
 
 ## Execution Steps
 ### Step 1: ...
@@ -341,11 +341,11 @@ disable-model-invocation: true
 
 ---
 
-## Global Rules (All Skills)
+## 全スキル共通ルール
 
-- **Never send emails** -- draft creation only
-- **Never include cost/rate/margin/hourly-rate information** in any output
-- **Always get user confirmation before writing to external services**
-- **Never include credentials, API keys, or tokens** in skill output
-- **Read all Slack threads in full** -- no summaries or abbreviations
-- **Do not start from archives alone** -- always fetch latest data from live sources first
+- **メールは絶対に送信しない** — 下書き作成までに留める
+- **原価・単価・利益率・時給などの内部金額情報を一切出力しない**
+- **外部サービスへの書き込みは必ずユーザーの承認を得てから実施する**
+- **クレデンシャル・API キー・トークンを出力に含めない**
+- **Slack スレッドは要約せず全件読む** — 省略・要約禁止
+- **アーカイブだけを起点に作業を始めない** — 必ず最新データをライブのソースから取得する
