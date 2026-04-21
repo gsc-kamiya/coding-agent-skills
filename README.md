@@ -1,37 +1,96 @@
-# Claude Code Skills
+# Coding-Agent Skills
 
-業務ワークフロー向けの再利用可能な Claude Code スキル集です。各スキルは **汎用かつ設定可能** に設計されており、自社・自プロジェクト・利用ツールに合わせてプロジェクト直下の `CLAUDE.md` 内のプレースホルダ変数で挙動をカスタマイズできます。
+**Claude Code (Anthropic) / Gemini CLI (Google) / Codex CLI (OpenAI)** のいずれでも同じスラッシュコマンドが使える、業務ワークフロー向けスキル集です。
 
-## セットアップ
+開発・プロジェクト管理・営業・オペレーション・サイト運用までを網羅した **23 スキル / 5 カテゴリ**。プロジェクト直下の `CLAUDE.md` のプレースホルダ変数で、自社・自プロジェクトに合わせて簡単にカスタマイズできます。
 
-### 1. リポジトリをクローン
+---
+
+## 🚀 まずはここからセットアップ（3 分）
+
+エンジニアでなくても、ターミナル / PowerShell に **1 行貼り付けて Enter** だけで全部入ります。
+
+### macOS / Linux
+
+ターミナルを開いて、以下を貼り付けて Enter:
 
 ```bash
-cd ~/repos
-git clone git@github.com:{YOUR_ORG}/claude-skills.git
+curl -fsSL https://raw.githubusercontent.com/h2o-r/coding-agent-skills/main/bootstrap.sh | bash
 ```
 
-### 2. スキルをインストール
+### Windows
+
+「スタート」→「PowerShell」を検索して開き、以下を貼り付けて Enter:
+
+```powershell
+irm https://raw.githubusercontent.com/h2o-r/coding-agent-skills/main/bootstrap.ps1 | iex
+```
+
+> **インストールされるもの**: Git / Node.js / GitHub CLI / Claude Code / Gemini CLI / Codex CLI と、このリポジトリ自体（`~/coding-agent-skills/`）。インストール済みのものはスキップされます。
+
+完了後、好きなコーディングエージェントを起動すれば、すべてのスキルが `/<コマンド名>` で呼び出せます:
 
 ```bash
-cd claude-skills
-./setup.sh
+claude    # → /agent-setup-check, /site-update, ...
+gemini    # → /agent-setup-check, /site-update, ...
+codex     # → /agent-setup-check, /site-update, ...
 ```
 
-`setup.sh` は `~/.claude/skills/` をこのリポジトリの `skills/` ディレクトリへのシンボリックリンクに置き換えます。
-既存のスキルが存在する場合は、先に `~/.claude/skills.bak.{timestamp}` としてバックアップを作成します。
+---
 
+## 動作の仕組み
+
+`setup.sh` / `setup.ps1` は、検出した各エージェントの所定ディレクトリに同じスキル群を登録します:
+
+| エージェント | 登録先 | 形式 |
+|:--|:--|:--|
+| **Claude Code** | `~/.claude/skills/<name>/SKILL.md` | リポの `skills/` ディレクトリへのシンボリックリンク（自動更新） |
+| **Gemini CLI** | `~/.gemini/commands/<name>.toml` | 各 `SKILL.md` から TOML を生成（更新時は再実行が必要） |
+| **Codex CLI** | `~/.codex/prompts/<name>.md` | 各 `SKILL.md` へのシンボリックリンク（自動更新） |
+
+> **Gemini CLI の更新**: スキルを `git pull` で更新したら、`bash setup.sh gemini` (Windows: `.\setup.ps1 -Agents gemini`) で TOML を再生成してください。Claude / Codex はシンボリックリンクなので自動反映されます。
+
+---
+
+## 個別インストール
+
+ワンライナー以外の方法も用意しています。
+
+### 既に Claude Code / Gemini CLI / Codex CLI を入れている場合
+
+```bash
+git clone https://github.com/h2o-r/coding-agent-skills.git ~/coding-agent-skills
+cd ~/coding-agent-skills
+
+# macOS / Linux
+bash setup.sh           # インストール済みエージェントを自動検出
+bash setup.sh --all     # 3 エージェント全部に登録
+bash setup.sh claude    # Claude のみ
+bash setup.sh gemini    # Gemini のみ
+bash setup.sh codex     # Codex のみ
+
+# Windows
+.\setup.ps1                       # 自動検出
+.\setup.ps1 -All                  # 全部
+.\setup.ps1 -Agents claude,gemini # 個別指定
 ```
-~/.claude/skills/ -> ~/repos/claude-skills/skills/
-```
 
-### 3. MCP サーバー
+### Windows シンボリックリンクについて
 
-多くのスキルは MCP（Model Context Protocol）サーバーに依存しています。`~/.claude.json`（グローバル）またはプロジェクト直下の `.claude/settings.json` に設定してください。
+Windows でシンボリックリンクを作るには **Developer Mode** または **管理者 PowerShell** が必要です。
+通常モードでも `setup.ps1` は動きますが、その場合は自動的に「コピー」にフォールバックします（`git pull` 後に再実行が必要）。
+
+Developer Mode 有効化: 「設定 → プライバシーとセキュリティ → 開発者向け」→ Developer Mode を ON
+
+---
+
+## MCP サーバー設定（一部スキルで必要）
+
+スキルによっては Slack / Gmail / チケット管理などの外部サービス操作が必要です。`~/.claude.json`（Claude Code）または各エージェントの設定ファイルに MCP サーバーを定義してください。
 
 | MCP サーバー | パッケージ | 用途 | 利用スキル |
 |:--|:--|:--|:--|
-| **Google Workspace** | `workspace-mcp`（uvx） | Gmail, Calendar, Chat | pre/post-meeting-proposal, invoice-draft, ball-check |
+| **Google Workspace** | `workspace-mcp`（uvx） | Gmail, Calendar, Chat | pre/post-meeting-proposal, invoice-draft, ball-check, lead-* |
 | **Slack** | Claude Code 標準搭載 | チャンネル/スレッド読み取り、検索 | ball-check, progress-check, work-report |
 | **チケット管理** | `backlog-mcp-server`, Jira MCP など | チケット操作 | ball-check, progress-check, work-report |
 | **会計システム** | `freee-mcp`, QuickBooks MCP など | 請求書ドラフト | invoice-draft, month-end |
@@ -56,10 +115,6 @@ cd claude-skills
 
 > **重要**: `WORKSPACE_MCP_PORT` は `"0"`（自動割当）にしてください。複数の Claude Code インスタンスを同時起動する際のポート競合を防ぎます。
 
-#### Slack MCP
-
-Claude Code 標準搭載の Slack MCP を使用します。Claude Code の設定画面から有効化してください。
-
 #### チケット管理 MCP の例（Backlog）
 
 ```json
@@ -77,17 +132,18 @@ Claude Code 標準搭載の Slack MCP を使用します。Claude Code の設定
 }
 ```
 
-### 4. CLI ツール
+---
+
+## オプション CLI ツール（一部スキルで必要）
 
 | ツール | インストール | 利用スキル |
 |:--|:--|:--|
-| **GitHub CLI** (`gh`) | `brew install gh` | fix-pr-ci, fix-pr-review, meeting-review, ball-check |
 | **Playwright** | `npm install -D @playwright/test && npx playwright install` | screen-*, screen-capture |
 | **python-pptx** | `pip install python-pptx` | weekly-report |
 | **google-genai** | `pip install google-genai pillow` | generate-slides, post-meeting-proposal |
 | **Docker** | Docker Desktop | weekly-report, screen-tdd, screen-test |
 
-> **複数 GitHub アカウントの使い分け**: 複数の Claude Code インスタンスを同時に動かす場合、グローバルに認証状態を変更する `gh auth switch` ではなく、ターミナルごとに `GH_TOKEN` を使ってください:
+> **複数 GitHub アカウントの使い分け**: 複数の Claude Code インスタンスを同時に動かす場合、グローバル切替の `gh auth switch` ではなく、ターミナルごとに `GH_TOKEN` を使ってください:
 > ```bash
 > # NG: 他のターミナルにも影響する
 > gh auth switch --user my-account
@@ -96,25 +152,6 @@ Claude Code 標準搭載の Slack MCP を使用します。Claude Code の設定
 > export GH_TOKEN=$(gh auth token --user my-account)
 > git push origin main
 > ```
-
-#### Google Workspace CLI（任意）
-
-MCP の範囲を超える Google Workspace 操作には、以下の CLI が利用できます:
-
-**選択肢 A: `gws`** -- [Google 公式 CLI](https://github.com/googleworkspace/cli)
-```bash
-npm install -g @googleworkspace/cli
-gws auth setup && gws auth login
-```
-
-**選択肢 B: `gog`** -- [コミュニティ製 CLI](https://github.com/steipete/gogcli)
-```bash
-brew install gogcli
-gog auth credentials ~/Downloads/client_secret_*.json
-gog auth add you@gmail.com
-```
-
-> **ヒント**: MCP と CLI は併用可能です。MCP がカバーしていない API 操作が必要な場合は、Bash ツール経由で CLI を呼び出してください。
 
 ---
 
@@ -168,7 +205,7 @@ Slack・チケットシステム・ドキュメントを横断したプロジェ
 
 ### サイト運用（5 スキル）
 
-非エンジニア向けのコーディングエージェント環境セットアップと、「自然言語で要件を伝える → GitHub Pages へ公開」までを安全に回すワークフロー。`templates/scripts/` にクロスプラットフォーム対応のセットアップスクリプト、`templates/.github/workflows/` に静的サイトプロジェクトに流用できる汎用デプロイワークフローを同梱しています。
+非エンジニア向けのコーディングエージェント環境セットアップと、「自然言語で要件を伝える → GitHub Pages へ公開」までを安全に回すワークフロー。
 
 | コマンド | 概要 | 前提 |
 |:--|:--|:--|
@@ -180,9 +217,11 @@ Slack・チケットシステム・ドキュメントを横断したプロジェ
 
 ---
 
-## プロジェクト設定（`CLAUDE.md`）
+## プロジェクト設定（`CLAUDE.md` / `AGENTS.md` / `GEMINI.md`）
 
-ほとんどのスキルは `{PROJECT_NAME}` や `{SLACK_CHANNELS}` などのプレースホルダ変数を使います。プロジェクト直下の `CLAUDE.md` で定義してください。
+ほとんどのスキルは `{PROJECT_NAME}` や `{SLACK_CHANNELS}` などのプレースホルダ変数を使います。プロジェクト直下に `CLAUDE.md`（Claude Code 用）/ `AGENTS.md`（Codex 用）/ `GEMINI.md`（Gemini 用）を配置し、変数を定義してください。
+
+> 3 ファイルとも同じ内容で OK です。`templates/agent-config/` に雛形があります。
 
 ### 共通設定テンプレート
 
@@ -266,9 +305,10 @@ Slack・チケットシステム・ドキュメントを横断したプロジェ
 ## ディレクトリ構成
 
 ```
-claude-skills/
+coding-agent-skills/
 ├── README.md
-├── setup.sh                  # ~/.claude/skills/ → このリポにシンボリックリンク
+├── bootstrap.sh / bootstrap.ps1   # ワンライナー全部入りインストール
+├── setup.sh    / setup.ps1        # スキルを各エージェントに登録
 ├── skills/
 │   ├── screen-tdd/           # 開発
 │   ├── screen-analyze/       # 開発
@@ -301,17 +341,32 @@ claude-skills/
 
 ---
 
-## スキルの追加・更新
+## アップデート
 
-### 既存スキルの更新
+スキルを最新化するには:
 
 ```bash
-cd ~/repos/claude-skills
+cd ~/coding-agent-skills
+git pull
+
+# Gemini を使っている場合のみ TOML を再生成 (Claude/Codex はシンボリックリンクなので自動反映)
+bash setup.sh gemini       # macOS / Linux
+.\setup.ps1 -Agents gemini # Windows
+```
+
+---
+
+## スキルの追加・更新
+
+### 既存スキルの編集
+
+```bash
+cd ~/coding-agent-skills
 vim skills/{skill-name}/SKILL.md
 git add -A && git commit -m "update: {skill-name}" && git push
 ```
 
-他の端末では: `cd ~/repos/claude-skills && git pull`
+他端末では: `cd ~/coding-agent-skills && git pull` のあと、Gemini を使う場合のみ `bash setup.sh gemini` を再実行。
 
 ### 新規スキルの追加
 
