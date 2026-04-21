@@ -1,0 +1,85 @@
+name: Deploy to GitHub Pages
+
+# Generic GitHub Pages deploy workflow for static-site frameworks
+# (Nuxt / Next / Astro / Vite / Hugo / Jekyll / etc.).
+#
+# Customize the BUILD step for your framework. Examples are commented below.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Optional daily rebuild — useful if your site fetches external data at build time.
+    # Remove the schedule block if you do not need this.
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # ---------------------------------------------------------------------
+      # Optional: fetch external data at build time (RSS, headless CMS, etc.)
+      #
+      # - name: Fetch RSS feed
+      #   run: node scripts/fetch-rss.mjs
+      #
+      # - name: Fetch CMS content
+      #   if: env.CMS_ACCESS_TOKEN != ''
+      #   env:
+      #     CMS_ACCESS_TOKEN: ${{ secrets.CMS_ACCESS_TOKEN }}
+      #   run: node scripts/fetch-cms.mjs
+      #
+      # - name: Commit fetched data if changed (skip when triggered by bot)
+      #   if: github.actor != 'github-actions[bot]'
+      #   run: |
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email "github-actions[bot]@users.noreply.github.com"
+      #     git add public/data/
+      #     git diff --cached --quiet || git commit -m "chore: refresh external data"
+      #     git push || true
+      # ---------------------------------------------------------------------
+
+      # ---------------------------------------------------------------------
+      # BUILD — replace with the command for your framework:
+      #
+      # Nuxt:    npx nuxt generate    (output: .output/public)
+      # Next:    npx next build && npx next export    (output: out)
+      # Astro:   npx astro build      (output: dist)
+      # Vite:    npm run build        (output: dist)
+      # Hugo:    hugo --minify        (output: public)
+      # Jekyll:  bundle exec jekyll build    (output: _site)
+      # ---------------------------------------------------------------------
+      - name: Build
+        run: npx nuxt generate
+
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          # Update this to the build output directory for your framework.
+          path: .output/public
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
