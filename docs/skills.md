@@ -1,6 +1,6 @@
 # スキル一覧
 
-全 23 スキル / 5 カテゴリ。各スキルの詳細は `skills/<name>/SKILL.md` を参照してください。
+全 24 スキル / 5 カテゴリ。各スキルの詳細は `skills/<name>/SKILL.md` を参照してください。
 
 ## 開発ワークフロー（8 スキル）
 
@@ -48,14 +48,15 @@ Slack・チケットシステム・ドキュメントを横断したプロジェ
 | `/invoice-draft` | 請求書ドラフト + 会計システム入力ガイドの生成 | 会計 MCP |
 | `/month-end` | 月次クロージングのオーケストレーション: ball-check → progress → docs → report → invoice → git push | 全 MCP サーバー |
 
-## サイト運用（5 スキル）
+## サイト運用（6 スキル）
 
-非エンジニア向けのコーディングエージェント環境セットアップと、「自然言語で要件を伝える → GitHub Pages へ公開」までを安全に回すワークフロー。
+非エンジニア向けのコーディングエージェント環境セットアップと、「自然言語で要件を伝える → GitHub Pages へ公開」までを安全に回すワークフロー。新規サイトの立ち上げから日々の更新・公開までカバー。
 
 | コマンド | 概要 | 前提 |
 |:--|:--|:--|
 | `/agent-setup` | Node.js / GitHub CLI / Claude Code / Gemini CLI / Codex CLI とプロジェクト依存パッケージのガイド付きインストール | -- |
 | `/agent-setup-check` | 開発環境が正常に整っているかをヘルスチェック | -- |
+| `/site-create` | 新規 GitHub Pages サイトを Astro 雛形 + デプロイ workflow + agent config で一括作成し、GitHub リポ作成 + Pages 有効化 + 公開 URL 取得まで自動実行 | GitHub CLI（認証済み）, Node.js |
 | `/site-update` | 自然言語の要件をコード変更に翻訳し、自動テスト → 自動修復 → プレビューまで実施 | GitHub CLI, プロジェクトのテストコマンド |
 | `/site-preview` | リモートと同期 → テスト（自動修復付き）→ プレビュー URL を案内 | GitHub CLI, プロジェクトのテストコマンド |
 | `/site-publish` | テストゲート → 競合回避 rebase → ユーザー確認 → コミット → push → デプロイ監視 | GitHub CLI, プロジェクトのテストコマンド |

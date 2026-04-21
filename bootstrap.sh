@@ -119,25 +119,52 @@ else
 fi
 bash setup.sh --all
 
+# --- GitHub 認証（gh auth login）---
+echo ""
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${BOLD}${CYAN}  GitHub にサインイン${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+if gh auth status >/dev/null 2>&1; then
+  echo -e "  ${GREEN}✓${NC} 既にサインイン済み"
+  gh auth status 2>&1 | sed 's/^/     /'
+else
+  if [ -t 0 ]; then
+    # 対話可能な端末なら gh auth login を起動
+    echo -e "  ${CYAN}▶${NC} ブラウザで GitHub にサインインします..."
+    echo -e "  ${YELLOW}※ HTTPS / web ブラウザ ログインを推奨${NC}"
+    echo ""
+    gh auth login --git-protocol https --web || {
+      echo -e "  ${YELLOW}※ サインインがスキップされました。後ほど次のコマンドを実行してください:${NC}"
+      echo -e "       ${BOLD}gh auth login${NC}"
+    }
+  else
+    # curl|bash 等で stdin が無い場合はスキップ
+    echo -e "  ${YELLOW}※ 非対話モードのためサインインをスキップ。次のコマンドを手動で実行してください:${NC}"
+    echo -e "       ${BOLD}gh auth login${NC}"
+  fi
+fi
+
 # --- 完了 ---
 echo ""
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}${BOLD}  セットアップ完了！${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo -e "  ${BOLD}次の手順:${NC}"
+echo -e "  ${BOLD}試してみる:${NC}"
 echo ""
-echo -e "  ${CYAN}1.${NC} GitHub にログイン (まだの場合):"
-echo -e "       ${BOLD}gh auth login${NC}"
-echo ""
-echo -e "  ${CYAN}2.${NC} 好きなコーディングエージェントを起動:"
+echo -e "  ${CYAN}1.${NC} 好きなコーディングエージェントを起動:"
 echo -e "       ${BOLD}claude${NC}    (Anthropic)"
 echo -e "       ${BOLD}gemini${NC}    (Google)"
 echo -e "       ${BOLD}codex${NC}     (OpenAI)"
 echo ""
-echo -e "  ${CYAN}3.${NC} 起動したエージェント内でスキルを呼び出す:"
-echo -e "       ${BOLD}/agent-setup-check${NC}     # 環境確認"
+echo -e "  ${CYAN}2.${NC} はじめての一歩 — 新規 GitHub Pages サイトを作って公開:"
+echo -e "       ${BOLD}/site-create my-first-site${NC}"
+echo ""
+echo -e "  ${CYAN}3.${NC} その他のスキル:"
+echo -e "       ${BOLD}/agent-setup-check${NC}     # 環境ヘルスチェック"
 echo -e "       ${BOLD}/site-update ...${NC}       # サイト更新"
+echo -e "       ${BOLD}/weekly-report${NC}         # 週次レポート"
 echo ""
 echo -e "  ${YELLOW}※ 各エージェントの初回起動時にログインを求められます。画面の指示に従ってください。${NC}"
 echo ""
