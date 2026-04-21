@@ -159,13 +159,26 @@ if ($installGemini) {
         $descEscaped = $desc -replace '\\', '\\\\' -replace '"', '\"'
 
         $out = Join-Path $geminiDst ($dir.Name + ".toml")
-        $toml = @"
+        # 本文に ''' が含まれていれば basic multi-line string にフォールバック (\ と """ をエスケープ)。
+        # 含まれていなければ literal multi-line string (''' ... ''') を使い、\ も """ もそのまま埋め込める。
+        if ($content -like "*'''*") {
+            $escBody = $content -replace '\\', '\\\\' -replace '"""', '\"\"\"'
+            $toml = @"
 description = "$descEscaped"
 
 prompt = """
-$content
+$escBody
 """
 "@
+        } else {
+            $toml = @"
+description = "$descEscaped"
+
+prompt = '''
+$content
+'''
+"@
+        }
         Set-Content -Path $out -Value $toml -Encoding UTF8
         $count++
     }

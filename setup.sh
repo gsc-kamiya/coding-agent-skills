@@ -143,12 +143,25 @@ if [ "$INSTALL_GEMINI" -eq 1 ]; then
     # TOML 三重引用符に干渉する場合に備えてバックスラッシュとダブルクォートのみエスケープ
     desc_escaped=$(printf '%s' "$desc" | sed 's/\\/\\\\/g; s/"/\\"/g')
 
-    {
-      printf 'description = "%s"\n\n' "$desc_escaped"
-      printf 'prompt = """\n'
-      cat "$src_file"
-      printf '\n"""\n'
-    } > "$out"
+    # 本文に '''  が含まれているとリテラル multi-line string が壊れるため、その場合のみエスケープ用に basic string を使う。
+    # 通常のスキルは '''  を含まないので、リテラル文字列で `\` も `"""` もそのまま埋め込めるルートを優先する。
+    if grep -qF "'''" "$src_file"; then
+      # フォールバック: basic multi-line string + '\' / '"""' をエスケープ
+      esc_body=$(sed -e 's/\\/\\\\/g' -e 's/"""/\\"\\"\\"/g' "$src_file")
+      {
+        printf 'description = "%s"\n\n' "$desc_escaped"
+        printf 'prompt = """\n%s\n"""\n' "$esc_body"
+      } > "$out"
+    else
+      # 標準: TOML literal multi-line string ('''...''')
+      # — '\' のエスケープ不要、`"""` も含められる。
+      {
+        printf 'description = "%s"\n\n' "$desc_escaped"
+        printf "prompt = '''\n"
+        cat "$src_file"
+        printf "\n'''\n"
+      } > "$out"
+    fi
     GENERATED=$((GENERATED+1))
   done
   print_ok "${GENERATED} 件の TOML を生成: ${GEMINI_DST}"
