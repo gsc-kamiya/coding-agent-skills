@@ -1,0 +1,117 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const features = [
+  {
+    icon: '⚡',
+    title: '高速・軽量',
+    desc: 'Astro による静的サイト生成で、初回読み込みが速く、SEO にも強いサイトになります。',
+  },
+  {
+    icon: '🎨',
+    title: 'モダンデザイン',
+    desc: 'グラデーションとガラス質感を組み合わせた現代的なルック&フィール。すぐにそのまま使えます。',
+  },
+  {
+    icon: '📱',
+    title: 'レスポンシブ',
+    desc: 'スマートフォン・タブレット・デスクトップのすべてで美しく表示されます。',
+  },
+  {
+    icon: '🚀',
+    title: 'ワンコマンド公開',
+    desc: 'GitHub Pages へ自動デプロイ。エージェントに「公開して」と頼むだけ。',
+  },
+  {
+    icon: '🤖',
+    title: 'エージェント駆動',
+    desc: '更新は自然言語で。Claude / Gemini / Codex のいずれにも /site-update で対応します。',
+  },
+  {
+    icon: '🌐',
+    title: 'カスタムドメイン対応',
+    desc: '独自ドメインの設定もガイド付き。プロフェッショナルな URL で運用できます。',
+  },
+];
+---
+
+<Layout>
+  <!-- ============== Hero ============== -->
+  <section class="hero">
+    <div class="container">
+      <span class="badge">
+        <span class="dot"></span>
+        新規サイト公開しました
+      </span>
+      <h1>{{SITE_TITLE}}</h1>
+      <p class="lead">
+        {{SITE_DESCRIPTION}}
+      </p>
+      <div class="cta-row">
+        <a href="#features" class="btn btn-primary">
+          特徴を見る
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#contact" class="btn btn-ghost">お問い合わせ</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Features ============== -->
+  <section id="features">
+    <div class="container">
+      <h2>このサイトの特徴</h2>
+      <p class="subtitle">
+        コーディングエージェントによって構築された、すぐに使える美しい雛形です。
+      </p>
+      <div class="features">
+        {features.map(f => (
+          <article class="feature">
+            <div class="icon">{f.icon}</div>
+            <h3>{f.title}</h3>
+            <p>{f.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== About ============== -->
+  <section id="about">
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <h2>はじめての一歩</h2>
+          <p>
+            このサイトは <code>/site-create</code> スキルによって自動生成されました。
+            次は <code>/site-update</code> で日本語で要件を伝えるだけで、コンテンツや見た目を更新できます。
+          </p>
+          <ul>
+            <li>テキスト・見出しの変更を自然言語で指示</li>
+            <li>新しいセクションやページを追加</li>
+            <li>カラーテーマやロゴの差し替え</li>
+            <li><code>/site-publish</code> で公開サイトに反映</li>
+          </ul>
+        </div>
+        <div class="image-card">{{INITIAL}}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== CTA ============== -->
+  <section id="contact" class="cta-section">
+    <div class="container">
+      <h2>さっそく中身を変えてみよう</h2>
+      <p class="subtitle">
+        「トップページの見出しを変えて」「お問い合わせフォームを追加して」など、自然な日本語で指示してください。
+      </p>
+      <div class="cta-row">
+        <a href="https://github.com/{{OWNER}}/{{SITE_NAME}}" class="btn btn-primary" target="_blank" rel="noopener">
+          GitHub リポジトリ
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a href={`${import.meta.env.BASE_URL}`} class="btn btn-ghost">トップへ戻る</a>
+      </div>
+    </div>
+  </section>
+</Layout>
